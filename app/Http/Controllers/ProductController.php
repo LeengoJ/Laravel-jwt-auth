@@ -14,13 +14,15 @@ class ProductController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
+            'name' => 'required|string|unique:products',
             'img' => 'sometimes|string',
             'sizes' => 'required',
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
+
+            return json_encode(Response::error(Response::CVTM($validator)));
+
         }
 
         $product = Product::create($validator->validated());
@@ -64,11 +66,12 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|string',
             'img' => 'sometimes|string',
-            'sizes' => 'sometimes|array',
+            'sizes' => 'sometimes|string',
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
+                        return json_encode(Response::error(Response::CVTM($validator)));
+
         }
 
         $product->update($validator->validated());
@@ -96,16 +99,17 @@ class ProductController extends Controller
         ], 200);
     }
 
-    public function searchByName($name)
-{
-    $product = Product::where('name', 'like', '%' . $name . '%')->get();
+    public function searchByName(Request $request)
+    {
+        $name = $request->all()["name"];
+        $product = Product::where('name', 'like', '%' . $name . '%')->get();
 
-    if($product->isEmpty()) {
-       return response()->json([
-            'message' => 'No table found',
-        ], 404);
+        if($product->isEmpty()) {
+        return response()->json([
+                'message' => 'No table found',
+            ], 404);
+        }
+
+        return response()->json($product);
     }
-
-    return response()->json($product);
-}
 }

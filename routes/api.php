@@ -4,6 +4,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TableController;
+use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\BeforeOrderController;
+
+
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -28,20 +34,67 @@ Route::group([
 });
 Route::group([
     'middleware' => ['api','checkrole:admin'],
-    'prefix' => 'product'
+    'prefix' => 'products'
 ],function ($router) {
-    Route::post('/product', [ProductController::class, 'create']);
-    Route::get('/product/{id}', [ProductController::class, 'read']);
-    Route::put('/product/{id}', [ProductController::class, 'update']);
-    Route::delete('/product/{id}', [ProductController::class, 'delete']);
+    Route::post('', [ProductController::class, 'create']);
+    Route::get('/{id}', [ProductController::class, 'getProduct']);
+    Route::get('', [ProductController::class, 'getAllProducts']);
+    Route::post('/{id}', [ProductController::class, 'update']);
+    Route::delete('{id}', [ProductController::class, 'delete']);
+    Route::get('/productByName', [ProductController::class, 'searchByName']);
 });
 
 Route::group([
     'middleware' => ['api','checkrole:admin'],
-    'prefix' => 'product'
+    'prefix' => 'tables'
 ],function ($router) {
-    Route::post('/tables', [TableController::class, 'create']);
-    Route::get('/tables/{id}', [TableController::class, 'read']);
-    Route::put('/tables/{id}', [TableController::class, 'update']);
-    Route::delete('/tables/{id}', [TableController::class, 'delete']);
+    Route::post('', [TableController::class, 'create']);
+    Route::get('/{id}', [TableController::class, 'getTable']);
+    Route::get('', [TableController::class, 'getAllTables']);
+    Route::post('/updateTable/{id}', [TableController::class, 'update']);
+    Route::delete('{id}', [TableController::class, 'delete']);
+    Route::post('/updateStatusTables/{id}', [TableController::class, 'updateStatusTable']);
+    Route::get('/searchByName', [TableController::class, 'searchByName']);
+});
+Route::group([
+    'middleware' => ['api','checkrole:admin'],
+    'prefix' => 'discounts'
+],function ($router) {
+    Route::post('', [DiscountController::class, 'create']);
+    Route::get('/{id}', [DiscountController::class, 'getDiscount']);
+    Route::get('/getAllDiscountsOfProduct/{productId}', [DiscountController::class, 'getAllDiscountsOfProduct']);
+    Route::get('', [DiscountController::class, 'getAllDiscounts']);
+    Route::post('/updateTable/{id}', [DiscountController::class, 'update']);
+    Route::delete('/{id}', [DiscountController::class, 'delete']);
+    Route::get('/getDiscountByCode', [DiscountController::class, 'getDiscountByCode']);
+});
+Route::group([
+    'middleware' => ['api','checkrole:admin'],
+    'prefix' => 'orders'
+],function ($router) {
+    Route::post('', [OrderController::class, 'createOrderByStaff']);
+    Route::get('/{id}', [OrderController::class, 'GetOderById']);
+    Route::get('', [OrderController::class, 'getAllOrders']);
+    Route::post('/updateOrder/{id}', [OrderController::class, ' ']);
+    Route::delete('/{id}', [OrderController::class, 'closeOrder']);
+    Route::get('/findOrdersBySdt', [OrderController::class, 'findOrdersBySdt']);
+    Route::post('/addProductIntoOrder/{orderId}', [OrderController::class, 'addProductIntoOrder']);
+    Route::get('/showOrderDetailByID/{id}', [OrderController::class, 'showOrderDetailByID']);
+    Route::get('/getOrderDetails/{id}', [OrderController::class, 'getOrderDetails']);
+});
+Route::group([
+    'middleware' => ['api','checkrole:admin'],
+    'prefix' => 'before_orders'
+],function ($router) {
+    Route::post('', [DiscountController::class, 'createBeforeOrder']);
+    Route::get('/{id}', [DiscountController::class, 'GetOderById']);
+    Route::get('/getBeforeOrderDetails/{productId}', [DiscountController::class, 'getAllDiscountsOfProduct']);
+    Route::get('', [DiscountController::class, 'getAllBeforeOrders']);
+    Route::get('/getBeforeOrderDetails', [DiscountController::class, 'getBeforeOrderDetails']);
+    Route::get('/getBeforeOrdersOfUser/{id}', [DiscountController::class, 'getBeforeOrdersOfUser']);
+    Route::post('/updateOrder/{id}', [DiscountController::class, 'getBeforeOrdersOfUser']);
+    Route::post('/updateBeforeOrderStatus/{id}', [DiscountController::class, 'updateBeforeOrderStatus']);
+    Route::post('/convertOrder/{id}', [DiscountController::class, 'convertOrder']);
+    Route::delete('/{id}', [DiscountController::class, 'closeBeforeOrder']);
+    Route::get('/findOrdersBySdt', [DiscountController::class, 'findOrdersBySdt']);
 });

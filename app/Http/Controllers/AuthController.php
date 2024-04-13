@@ -27,10 +27,10 @@ class AuthController extends Controller
         ]);
         if ($validator->fails()) {
             // return response()->json($validator->errors(), 422);
-            return response()->json(Response::error());
+            return json_encode(Response::error(Response::CVTM($validator)));
         }
         if (! $token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return json_encode(Response::error(Response::CVTM($validator)));
         }
         return $this->createNewToken($token);
     }
@@ -48,17 +48,16 @@ class AuthController extends Controller
             'role' => 'required|string'
         ]);
         if($validator->fails()){
-            // return response()->json($validator->errors()->toJson(), 400);
-            return response()->json(Response::error($validator->errors()->toJson()));
+            // return response()->json($validator->errors()->toArray(), 400);
+            return json_encode(Response::error(Response::CVTM($validator)));
+            // return response()->json(Response::error(Response::CVTM($validator)));
+            // return "sai";
         }
         $user = User::create(array_merge(
                     $validator->validated(),
                     ['password' => bcrypt($request->password)]
                 ));
-        return response()->json([
-            'message' => 'User successfully registered',
-            'user' => $user
-        ], 201);
+        return response()->json(Response::success(Response::CVTM($validator)));
     }
 
     /**
@@ -68,7 +67,8 @@ class AuthController extends Controller
      */
     public function logout() {
         auth()->logout();
-        return response()->json(['message' => 'User successfully signed out']);
+        return response()->json(Response::success([],"User successfully signed out"));
+
     }
     /**
      * Refresh a token.
@@ -118,10 +118,12 @@ class AuthController extends Controller
 
         // Giả định rằng bạn có một phương thức Response::success để tạo một HTTP response
         // Thay thế này bằng cách bạn thích để tạo một response nếu cần thiết
-        return Response::success("success", $result);
+        // return Response::success("success", $result);
+        return response()->json(Response::success($result,"success"));
+
     }
     function getAllUsers() {
         $user = User::find();
-        return Response.success("success",$user);
+        return response()->json(Response::success($user,"success"));
     }
 }

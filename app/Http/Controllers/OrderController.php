@@ -63,7 +63,7 @@ class OrderController extends Controller
                 ->first();
 
             $discountAmount = 0;
-            $discountPayment += $singlePrice * $numberOfSize;
+            // $discountPayment += $singlePrice * $numberOfSize;
             if (!empty($discounts)) {
                 $discountAmount = $singlePrice * $numberOfSize * $discounts->discountPercent / 100;
 
@@ -246,7 +246,8 @@ class OrderController extends Controller
     }
 
     public function addProductIntoOrder(Request $request,$orderId)
-    {   $newOrderDetail = $request->all();
+    {
+        $newOrderDetail = $request->all();
         $newOrderDetail["orderId"] = $orderId;
         $orderDetail = OrderDetail::create($newOrderDetail);
 

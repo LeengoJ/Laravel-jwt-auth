@@ -14,11 +14,12 @@ class TableController extends Controller
             'name' => 'required|string',
             'floor' => 'required|integer',
             'status' => 'required|string',
-            'tableName' => 'required|string',
+            'tableNumber' => 'required|unique:tables',
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
+                        return json_encode(Response::error(Response::CVTM($validator)));
+
         }
 
         $table = Table::create($validator->validated());
@@ -67,7 +68,8 @@ class TableController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
+                        return json_encode(Response::error(Response::CVTM($validator)));
+
         }
 
         $table->update($validator->validated());
@@ -95,8 +97,9 @@ class TableController extends Controller
         ], 200);
     }
 
-    public function searchByName($name)
+    public function searchByName(Request $request)
     {
+        $name = $request->all()["name"];
         $table = Table::where('name', 'like', '%' . $name . '%')->get();
 
         if($table->isEmpty()) {
@@ -106,5 +109,30 @@ class TableController extends Controller
         }
 
         return response()->json($table);
+    }
+    public function updateStatusTable(Request $request, $tableId)
+    {
+        $table = Table::find($tableId);
+
+        if(!$table) {
+                return response()->json([
+                    'message' => 'Table not found',
+                ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|string',
+        ]);
+
+        if($validator->fails()){
+            return json_encode(Response::error(Response::CVTM($validator)));
+        }
+
+        $table->update(['status' => $request->status]);
+
+        return response()->json([
+            'message' => 'Table status successfully updated',
+            'table' => $table
+        ]);
     }
 }

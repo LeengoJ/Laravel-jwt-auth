@@ -51,82 +51,101 @@ class BeforeOrderController extends Controller
             // Đảm bảo cả hai yêu cầu trên đều thành công, nếu không, đảo ngược lại
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'success',
-                'beforeOrder' => $beforeOrder
-            ], 201);
+            return response()->json(Response::success($beforeOrder,"success"));
         } catch (\Exception $e) {
             // rollback the transaction
             DB::rollBack();
 
             // handling the exception
-            return response()->json([
-                'success' => false,
-                'message' => "Error: " . $e->getMessage(),
-            ], 500);
+            return json_encode(Response::error("Loi he thong"));
         }
     }
     public function getAllBeforeOrders(Request $request) {
-    // default values
-    $page = $request->input('page', 0);
-    $status = $request->input('status', 'open/close');
+        // default values
+        $page = $request->input('page', 0);
+        $status = $request->input('status', 'open/close');
 
-    $beforeOrders = BeforeOrder::where('status', $status)
-      ->orderBy('created_at', 'desc')
-      ->paginate(10, ['*'], 'page', $page);
+        $beforeOrders = BeforeOrder::where('status', $status)
+        ->orderBy('created_at', 'desc')
+        ->paginate(10, ['*'], 'page', $page);
 
-    return response()->json(['success' => true, 'message' => 'success', 'beforeOrders' => $beforeOrders]);
-  }
-
-  public function getBeforeOrderDetails($id) {
-    $beforeOrder = BeforeOrder::where('deforeOderId', $id)->first();
-
-    if($beforeOrder){
-      return response()->json(['success' => true, 'message' => 'success', 'beforeOrder' => $beforeOrder]);
-    }else{
-      return response()->json(['success' => false, 'message' => 'No order found']);
+        return response()->json(['success' => true, 'message' => 'success', 'beforeOrders' => $beforeOrders]);
     }
-  }
 
-  public function getBeforeOrdersOfUser() {
-    $userId = Auth::id();
-    $beforeOrders = BeforeOrder::where('userId', $userId)->get();
+    public function getBeforeOrderDetails($id) {
+        $beforeOrder = BeforeOrder::where('beforeOderId', $id)->first();
 
-    return response()->json(['success' => true, 'message' => 'success', 'beforeOrders' => $beforeOrders]);
-  }
-
-  public function updateBeforeOrderStatus($id, Request $request) {
-    $status = $request->input('status', 'prepare/close');
-
-    $beforeOrder = BeforeOrder::where('deforeOderId', $id)->first();
-    if($beforeOrder){
-      $beforeOrder->status = $status;
-      $beforeOrder->save();
-
-      return response()->json(['success' => true, 'message' => 'Order status updated']);
-    }else{
-      return response()->json(['success' => false, 'message' => 'No order found']);
+        if($beforeOrder){
+            return response()->json(['success' => true, 'message' => 'success', 'beforeOrder' => $beforeOrder]);
+        }else{
+            return response()->json(['success' => false, 'message' => 'No order found']);
+        }
     }
-  }
 
-  public function convertOrder($id) {
-    // This function needs to be customized based on how you intend to implement the conversion from 'beforeOrder' to 'order'
-    // Assuming you have an 'Order' model, your implementation may look something like this:
+    public function getBeforeOrdersOfUser() {
+        $userId = Auth::id();
+        $beforeOrders = BeforeOrder::where('userId', $userId)->get();
 
-    $beforeOrder = BeforeOrder::where('deforeOderId', $id)->first();
-    if($beforeOrder){
-      $order = new Order;
-      $order->time = $beforeOrder->time;
-      $order->status = 'processing';  // or any appropriate status
-      $order->userId = $beforeOrder->userId;
-      // copy remaining necessary fields...
-
-      $order->save();
-
-      return response()->json(['success' => true, 'message' => 'success', 'order' => $order]);
-    }else{
-      return response()->json(['success' => false, 'message' => 'No order found to convert']);
+        return response()->json(['success' => true, 'message' => 'success', 'beforeOrders' => $beforeOrders]);
     }
-  }
+
+    public function updateBeforeOrderStatus($id, Request $request) {
+        $status = $request->input('status', 'prepare/close');
+
+        $beforeOrder = BeforeOrder::where('deforeOderId', $id)->first();
+        if($beforeOrder){
+        $beforeOrder->status = $status;
+        $beforeOrder->save();
+
+        return response()->json(['success' => true, 'message' => 'Order status updated']);
+        }else{
+        return response()->json(['success' => false, 'message' => 'No order found']);
+        }
+    }
+
+    public function convertOrder($id) {
+        // This function needs to be customized based on how you intend to implement the conversion from 'beforeOrder' to 'order'
+        // Assuming you have an 'Order' model, your implementation may look something like this:
+
+        $beforeOrder = BeforeOrder::where('deforeOderId', $id)->first();
+        if($beforeOrder){
+        $order = new Order;
+        $order->time = $beforeOrder->time;
+        $order->status = 'processing';  // or any appropriate status
+        $order->userId = $beforeOrder->userId;
+        // copy remaining necessary fields...
+
+        $order->save();
+
+        return response()->json(['success' => true, 'message' => 'success', 'order' => $order]);
+        }else{
+        return response()->json(['success' => false, 'message' => 'No order found to convert']);
+        }
+    }
+    public function closeBeforeOrder($id)
+    {
+        $beforeOrder = BeforeOrder::where('beforeOderId', $id)->first();
+
+        if(!$beforeOrder) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order not found',
+            ], 404);
+        }
+
+        if($beforeOrder->status == 'close') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Order is already closed',
+            ], 400);
+        }
+
+        $beforeOrder->status = 'closed';
+        $beforeOrder->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Order status successfully updated to closed',
+        ], 200);
+    }
 }

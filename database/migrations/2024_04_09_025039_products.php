@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('productId');
             $table->string('name');
             $table->string('img')->nullable();
-            $table->json('sizes');
+            $table->string('sizes');
             $table->timestamps();
         });
     }
