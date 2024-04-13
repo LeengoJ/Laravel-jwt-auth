@@ -8,7 +8,9 @@ use App\Models\Product;
 
 class ProductController extends Controller
 {
-    //
+    public function updateProductDetails(){
+
+    }
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -29,7 +31,7 @@ class ProductController extends Controller
         ], 201);
     }
 
-    public function read($productId)
+    public function getProduct($productId)
     {
         $product = Product::find($productId);
 
@@ -40,6 +42,13 @@ class ProductController extends Controller
         }
 
         return response()->json($product);
+    }
+
+    public function getAllProducts()
+    {
+        $products = Product::all();
+
+        return response()->json($products);
     }
 
     public function update(Request $request, $productId)
@@ -86,4 +95,17 @@ class ProductController extends Controller
             'message' => 'Product successfully deleted',
         ], 200);
     }
+
+    public function searchByName($name)
+{
+    $product = Product::where('name', 'like', '%' . $name . '%')->get();
+
+    if($product->isEmpty()) {
+       return response()->json([
+            'message' => 'No table found',
+        ], 404);
+    }
+
+    return response()->json($product);
+}
 }

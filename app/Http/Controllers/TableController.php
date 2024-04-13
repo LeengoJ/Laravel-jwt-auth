@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Models\Table;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Table;
 
 class TableController extends Controller
 {
@@ -28,9 +29,9 @@ class TableController extends Controller
         ], 201);
     }
 
-    public function read($id)
+    public function getTable($tableId)
     {
-        $table = Table::find($id);
+        $table = Table::find($tableId);
 
         if(!$table) {
             return response()->json([
@@ -41,9 +42,16 @@ class TableController extends Controller
         return response()->json($table);
     }
 
-    public function update(Request $request, $id)
+    public function getAllTables()
     {
-        $table = Table::find($id);
+        $tables = Table::all();
+
+        return response()->json($tables);
+    }
+
+    public function update(Request $request, $tableId)
+    {
+        $table = Table::find($tableId);
 
         if(!$table) {
             return response()->json([
@@ -70,9 +78,9 @@ class TableController extends Controller
         ]);
     }
 
-    public function delete($id)
+    public function delete($tableId)
     {
-        $table = Table::find($id);
+        $table = Table::find($tableId);
 
         if(!$table) {
             return response()->json([
@@ -85,5 +93,18 @@ class TableController extends Controller
         return response()->json([
             'message' => 'Table successfully deleted',
         ], 200);
+    }
+
+    public function searchByName($name)
+    {
+        $table = Table::where('name', 'like', '%' . $name . '%')->get();
+
+        if($table->isEmpty()) {
+        return response()->json([
+                'message' => 'No table found',
+            ], 404);
+        }
+
+        return response()->json($table);
     }
 }

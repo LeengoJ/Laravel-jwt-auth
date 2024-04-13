@@ -17,6 +17,7 @@ return new class extends Migration
             $table->timestamp('endTime');
             $table->string('name');
             $table->string('code')->unique();
+            $table->Integer('discountPercent');
             $table->unsignedBigInteger('productId');
             $table->timestamps();
 

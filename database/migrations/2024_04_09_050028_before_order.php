@@ -21,7 +21,6 @@ return new class extends Migration
             $table->text('note')->nullable();
             $table->string('discountCode')->nullable();
             $table->timestamps();
-
             $table->foreign('userId')->references('id')->on('users');
         });
     }

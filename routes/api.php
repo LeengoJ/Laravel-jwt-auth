@@ -23,6 +23,8 @@ Route::group([
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
+    Route::get('/searchUsers', [AuthController::class, 'searchUsers']);
+
 });
 Route::group([
     'middleware' => ['api','checkrole:admin'],

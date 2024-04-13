@@ -26,7 +26,8 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            // return response()->json($validator->errors(), 422);
+            return response()->json(Response::error());
         }
         if (! $token = auth()->attempt($validator->validated())) {
             return response()->json(['error' => 'Unauthorized'], 401);
@@ -47,7 +48,8 @@ class AuthController extends Controller
             'role' => 'required|string'
         ]);
         if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
+            // return response()->json($validator->errors()->toJson(), 400);
+            return response()->json(Response::error($validator->errors()->toJson()));
         }
         $user = User::create(array_merge(
                     $validator->validated(),
@@ -98,5 +100,28 @@ class AuthController extends Controller
             'expires_in' => auth()->factory()->getTTL() * 60,
             'user' => auth()->user()
         ]);
+    }
+    //
+    public function searchUsers($search, $filter) {
+        $users = User::find();
+
+        $result = array_filter($users, function ($user) use ($search, $filter) {
+            switch ($filter) {
+                case 'name':
+                    return stripos($user['name'], $search) !== false;
+                case 'sdt':
+                    return str_contains($user['sdt'], $search);
+                default:
+                    return false;
+            }
+        });
+
+        // Giả định rằng bạn có một phương thức Response::success để tạo một HTTP response
+        // Thay thế này bằng cách bạn thích để tạo một response nếu cần thiết
+        return Response::success("success", $result);
+    }
+    function getAllUsers() {
+        $user = User::find();
+        return Response.success("success",$user);
     }
 }
