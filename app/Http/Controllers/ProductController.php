@@ -8,8 +8,34 @@ use App\Models\Product;
 
 class ProductController extends Controller
 {
-    public function updateProductDetails(){
+    public function store(Request $request)
+    {
+        if(!$request->hasFile('fileName')) {
+            return json_encode(Response::error('upload_file_not_found'));
+        }
 
+        $allowedfileExtension=['pdf','jpg','png'];
+        $files = $request->file('fileName');
+        $errors = [];
+
+        foreach ($files as $file) {
+
+            $extension = $file->getClientOriginalExtension();
+
+            $check = in_array($extension,$allowedfileExtension);
+
+            if($check) {
+                foreach($request->fileName as $mediaFiles) {
+
+                    $path = $mediaFiles->store('public/images');
+                    $name = $mediaFiles->getClientOriginalName();
+                }
+            } else {
+                return json_encode(Response::error('invalid_file_format'));
+
+            }
+            return json_encode(Response::success([],"file_uploaded"));
+        }
     }
     public function create(Request $request)
     {
@@ -31,7 +57,7 @@ class ProductController extends Controller
         //     'message' => '',
         //     'product' => $product
         // ], 201);
-        return json_encode(Response::success([],"Product successfully created"));
+        return json_encode(Response::success($product,"Product successfully created"));
 
     }
 

@@ -36,6 +36,7 @@ Route::group([
     'middleware' => ['api','checkrole:admin'],
     'prefix' => 'products'
 ],function ($router) {
+    Route::post('/multiple-image-upload', [ProductController::class, 'store']);
     Route::post('', [ProductController::class, 'create']);
     Route::get('/{id}', [ProductController::class, 'getProduct']);
     Route::get('', [ProductController::class, 'getAllProducts']);
