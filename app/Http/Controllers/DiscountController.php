@@ -67,8 +67,8 @@ class DiscountController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'startTime' => 'sometimes|date',
-            'endTime' => 'sometimes|date|after:start_time',
+            'startTime' => 'sometimes|time',
+            'endTime' => 'sometimes|time|after:start_time',
             'name' => 'sometimes|string',
             'code' => 'sometimes|string|unique:discounts',
             'productId' => 'sometimes|integer|exists:products,id',

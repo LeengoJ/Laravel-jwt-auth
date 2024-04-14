@@ -18,6 +18,7 @@ class Order extends Model
         'note',
         'numberProduct',
         'totalBill',
+        'status',
         'discountPayment',
         'numberTable',
     ];

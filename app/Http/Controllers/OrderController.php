@@ -93,6 +93,7 @@ class OrderController extends Controller
             'numberProduct' => count($products),
             'totalBill' => $totalPrice,
             'discountPayment' => $discountPayment,
+            'status'=>'spending',
             'numberTable' => $new_order['numberTable'],
             'discountCode' => $new_order['discountCode']
         ]);
@@ -125,6 +126,7 @@ class OrderController extends Controller
     public function GetOderById($orderId)
     {
         $order = Order::find($orderId);
+
 
         if (!$order) {
             return json_encode(Response::error('Order not found'));
@@ -189,6 +191,7 @@ class OrderController extends Controller
                 'numberProduct' => count($products),
                 'totalBill' => $totalPrice,
                 'discountPayment' => $discountPayment,
+                'status'=>'spending',
                 'numberTable' => $new_order['numberTable'],
                 'discountCode' => $new_order['discountCode'],
             ]);
@@ -251,7 +254,7 @@ class OrderController extends Controller
             return response()->json(['message' => 'No orders found with this phone number'], 404);
         }
 
-                return json_encode(Response::success($orders,"successfully"));
+             return json_encode(Response::success($orders,"successfully"));
 
     }
 
@@ -289,5 +292,32 @@ class OrderController extends Controller
         // Nếu tìm thấy orderDetails, trả về dữ liệu
         return json_encode(Response::success($orderDetails,"successfully"));
 
+    }
+    public function updateOrderStatus($orderId, Request $request) {
+        // Tìm order bằng orderId
+        $order = Order::find($orderId);
+
+        // Nếu không tìm thấy order, trả về lỗi
+        if(!$order) {
+            // return response()->json([
+            //     'success' => false,
+            //     'message' => 'Order not found',
+            // ], 404);
+            return json_encode(Response::error('Order not found'));
+
+        }
+
+        // Nhận trạng thái mới từ request
+        $status = $request->get('status');
+
+        // Cập nhật trạng thái
+        $order->status = $status;
+        $order->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Order status updated',
+            'order' => $order
+        ], 200);
     }
 }

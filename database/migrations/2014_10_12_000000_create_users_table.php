@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('sdt');
             $table->rememberToken();
             $table->timestamps();
+            $table->string('isBan');
         });
     }
 

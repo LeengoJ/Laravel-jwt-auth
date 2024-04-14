@@ -101,7 +101,7 @@ class before_orderController extends Controller
         return json_encode(Response::success($before_order, "Before Order created successfully"));
     }
 
-    public function getAllbefore_orders(Request $request) {
+    public function getAllBeforeOrders(Request $request) {
         // default values
         $page = $request->input('page', 0);
         $status = $request->input('status', 'open/close');
@@ -115,19 +115,20 @@ class before_orderController extends Controller
 
     }
 
-    public function getbefore_orderDetails($id) {
-        $before_order = before_order::where('beforeOderId', $id)->first();
+    public function getbefore_orderDetails($deforeOderId) {
+        // $before_order = before_order::find($deforeOderId);
+        $before_order = before_order::where('deforeOderId', $deforeOderId)->first();
 
         if($before_order){
             // return response()->json(['success' => true, 'message' => 'success', 'before_order' => $before_order]);
-            return json_encode(Response::success($before_orders,"Thanh cong"));
+            return json_encode(Response::success($before_order,"Thanh cong"));
 
         }else{
             // return response()->json(['success' => false, 'message' => 'No order found']);
             return json_encode(Response::success([],"No order found"));
-
         }
     }
+
     public function updatebefore_order(Request $request, $id)
     {
         $updated_order = $request->all();
