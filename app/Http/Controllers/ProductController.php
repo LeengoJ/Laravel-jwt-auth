@@ -14,51 +14,74 @@ class ProductController extends Controller
             return json_encode(Response::error('upload_file_not_found'));
         }
 
-        $allowedfileExtension=['pdf','jpg','png'];
-        $files = $request->file('fileName');
+        $allowedfileExtension=['jpeg','jpg','png','btm'];
+        $file = $request->file('fileName');
         $errors = [];
 
-        foreach ($files as $file) {
+        $fileName=null;
+
+        // foreach ($files as $file) {
 
             $extension = $file->getClientOriginalExtension();
 
-            $check = in_array($extension,$allowedfileExtension);
+            $check = in_array(strtolower($extension),$allowedfileExtension);
 
             if($check) {
-                foreach($request->fileName as $mediaFiles) {
+                $fileName = time().'_'.$file->getClientOriginalName();
+                $filePath = $file->storeAs('public/images', $fileName);
 
-                    $path = $mediaFiles->store('public/images');
-                    $name = $mediaFiles->getClientOriginalName();
-                }
+                // $fileName = $file->getClientOriginalName();
+                // $fileName = $request->get('name') . '.' . $request->file('photo')->extension();        
+                // $request->file('fileName')->storeAs('public/images', $fileName);
+                // foreach($request->fileName as $mediaFiles) {
+                    // $path = $file->store('public/images');
+                    // $fileName = $file->getClientOriginalName();
+                // }
+                return json_encode(Response::success($fileName,"file_uploaded"));
             } else {
                 return json_encode(Response::error('invalid_file_format'));
-
             }
-            return json_encode(Response::success([],"file_uploaded"));
-        }
+        // }
     }
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|unique:products',
-            'img' => 'sometimes|string',
             'sizes' => 'required',
         ]);
 
         if($validator->fails()){
-
             return json_encode(Response::error(Response::CVTM($validator)));
-
         }
 
-        $product = Product::create($validator->validated());
+        $fileName="";
+
+        if($request->hasFile('img')) {
+            $file = $request->file('img');
+            $extension = $file->getClientOriginalExtension();
+            $allowedfileExtension=['jpeg','jpg','png','btm'];
+            $check = in_array(strtolower($extension),$allowedfileExtension);
+            if($check) {
+                $fileName = time().'_'.$file->getClientOriginalName();
+                $filePath = $file->storeAs('public/images', $fileName);
+            } else {
+                return json_encode(Response::error('Ảnh chỉ được png, jpg, jpeg, btm'));
+            }
+        }
+
+        $productData=[
+            'name' => $request->get('name'),
+            'img' => $fileName,
+            'sizes' => $request->get('sizes'),
+        ];
+
+        $product = Product::create($productData);
 
         // return response()->json([
         //     'message' => '',
         //     'product' => $product
         // ], 201);
         return json_encode(Response::success($product,"Product successfully created"));
-
     }
 
     public function getProduct($productId)
@@ -98,16 +121,37 @@ class ProductController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|string',
-            'img' => 'sometimes|string',
             'sizes' => 'sometimes|string',
         ]);
 
         if($validator->fails()){
             return json_encode(Response::error(Response::CVTM($validator)));
-
         }
 
-        $product->update($validator->validated());
+        $fileName="";
+
+        if($request->hasFile('img')) {
+            $file = $request->file('img');
+            $extension = $file->getClientOriginalExtension();
+            $allowedfileExtension=['jpeg','jpg','png','btm'];
+            $check = in_array(strtolower($extension),$allowedfileExtension);
+            if($check) {
+                $fileName = time().'_'.$file->getClientOriginalName();
+                $filePath = $file->storeAs('public/images', $fileName);
+            } else {
+                return json_encode(Response::error('Ảnh chỉ được png, jpg, jpeg, btm'));
+            }
+        }
+
+        $productData=[
+            'name' => $request->get('name'),
+            'sizes' => $request->get('sizes'),
+        ];
+        if($fileName!==""){
+            $productData["img"] = $fileName;
+        }
+
+        $product->update($productData);
 
         // return response()->json([
         //     'message' => '',
