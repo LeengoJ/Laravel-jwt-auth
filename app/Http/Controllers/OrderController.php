@@ -13,7 +13,9 @@ class OrderController extends Controller
     {
         $orders = Order::all();
 
-        return response()->json($orders);
+        // return response()->json($);
+        return json_encode(Response::success($orders,"successfully"));
+
     }
     public function getPriceBySizeAndId($productId, $size){
         $product = Product::find($productId);
@@ -111,10 +113,8 @@ class OrderController extends Controller
             ]);
         }
 
-        return response()->json([
-            'message' => 'Order successfully created',
-            'order' => $order
-        ], 201);
+                return json_encode(Response::success($orders,"successfully"));
+
     }
 
     public function GetOderById($orderId)
@@ -122,12 +122,10 @@ class OrderController extends Controller
         $order = Order::find($orderId);
 
         if (!$order) {
-            return response()->json([
-                'message' => 'Order not found'
-            ], 404);
+            return json_encode(Response::error('Order not found'));
         }
+        return json_encode(Response::success($orders,"successfully"));
 
-        return response()->json($order);
     }
 
     public function updateOrder(Request $request, $orderId)
@@ -213,10 +211,8 @@ class OrderController extends Controller
         }
 
         // Trả về phản hồi thành công
-        return response()->json([
-            'message' => 'Order successfully updated',
-            'order' => $order
-        ], 200);
+                return json_encode(Response::success($orders,"successfully"));
+
     }
 
     public function closeOrder($orderId)
@@ -224,15 +220,19 @@ class OrderController extends Controller
         $order = Order::find($orderId);
 
         if (!$order) {
-            return response()->json([
-                'message' => 'Order not found'
-            ], 404);
+            // return response()->json([
+            //     'message' => 'Order not found'
+            // ], 404);
+            return json_encode(Response::error('Order not found'));
+
         }
         $order->delete();
 
-        return response()->json([
-            'message' => 'Order successfully deleted'
-        ], 200);
+        // return response()->json([
+        //     'message' => ''
+        // ], 200);
+            return json_encode(Response::success([],"Order successfully deleted"));
+
     }
     public function findOrdersBySdt($sdt)
     {
@@ -242,7 +242,8 @@ class OrderController extends Controller
             return response()->json(['message' => 'No orders found with this phone number'], 404);
         }
 
-        return response()->json($orders);
+                return json_encode(Response::success($orders,"successfully"));
+
     }
 
     public function addProductIntoOrder(Request $request,$orderId)
@@ -251,10 +252,8 @@ class OrderController extends Controller
         $newOrderDetail["orderId"] = $orderId;
         $orderDetail = OrderDetail::create($newOrderDetail);
 
-        return response()->json([
-            'message' => 'OrderDetail created successfully',
-            'orderDetail' => $orderDetail
-        ], 201);
+                    return json_encode(Response::success([],"Order successfully deleted"));
+
     }
 
     public function showOrderDetailByID($id)
@@ -262,12 +261,12 @@ class OrderController extends Controller
         $orderDetail = OrderDetail::find($id);
 
         if(!$orderDetail) {
-            return response()->json([
-                'message' => 'OrderDetail not found',
-            ], 404);
+            return json_encode(Response::error('Order not found'));
+
         }
 
-        return response()->json($orderDetail);
+                return json_encode(Response::success($orderDetail,"successfully"));
+
     }
 
     public function getOrderDetails($orderId)
@@ -281,9 +280,7 @@ class OrderController extends Controller
         }
 
         // Nếu tìm thấy orderDetails, trả về dữ liệu
-        return response()->json([
-            'message' => 'Order details successfully retrieved',
-            'orderDetails' => $orderDetails
-        ], 200);
+                return json_encode(Response::success($orderDetails,"successfully"));
+
     }
 }

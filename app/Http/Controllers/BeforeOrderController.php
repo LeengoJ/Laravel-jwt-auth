@@ -57,7 +57,9 @@ class BeforeOrderController extends Controller
             DB::rollBack();
 
             // handling the exception
+
             return json_encode(Response::error("Loi he thong"));
+
         }
     }
     public function getAllBeforeOrders(Request $request) {
@@ -69,16 +71,22 @@ class BeforeOrderController extends Controller
         ->orderBy('created_at', 'desc')
         ->paginate(10, ['*'], 'page', $page);
 
-        return response()->json(['success' => true, 'message' => 'success', 'beforeOrders' => $beforeOrders]);
+        // return response()->json(['success' => true, 'message' => 'success', 'beforeOrders' => $beforeOrders]);
+            return json_encode(Response::success($beforeOrders,"Thanh cong"));
+
     }
 
     public function getBeforeOrderDetails($id) {
         $beforeOrder = BeforeOrder::where('beforeOderId', $id)->first();
 
         if($beforeOrder){
-            return response()->json(['success' => true, 'message' => 'success', 'beforeOrder' => $beforeOrder]);
+            // return response()->json(['success' => true, 'message' => 'success', 'beforeOrder' => $beforeOrder]);
+            return json_encode(Response::success($beforeOrders,"Thanh cong"));
+
         }else{
-            return response()->json(['success' => false, 'message' => 'No order found']);
+            // return response()->json(['success' => false, 'message' => 'No order found']);
+            return json_encode(Response::success([],"No order found"));
+
         }
     }
 
@@ -86,7 +94,9 @@ class BeforeOrderController extends Controller
         $userId = Auth::id();
         $beforeOrders = BeforeOrder::where('userId', $userId)->get();
 
-        return response()->json(['success' => true, 'message' => 'success', 'beforeOrders' => $beforeOrders]);
+        // return response()->json(['success' => true, 'message' => 'success', 'beforeOrders' => $beforeOrders]);
+        return json_encode(Response::success($beforeOrders,"Thanh cong"));
+
     }
 
     public function updateBeforeOrderStatus($id, Request $request) {
@@ -94,12 +104,16 @@ class BeforeOrderController extends Controller
 
         $beforeOrder = BeforeOrder::where('deforeOderId', $id)->first();
         if($beforeOrder){
-        $beforeOrder->status = $status;
-        $beforeOrder->save();
+            $beforeOrder->status = $status;
+            $beforeOrder->save();
 
-        return response()->json(['success' => true, 'message' => 'Order status updated']);
+            // return response()->json(['success' => true, 'message' => 'Order status updated']);
+            return json_encode(Response::success($beforeOrder,"Order status updated"));
+
         }else{
-        return response()->json(['success' => false, 'message' => 'No order found']);
+            // return response()->json(['success' => false, 'message' => 'No order found']);
+            return json_encode(Response::success([],"No order found"));
+
         }
     }
 
@@ -117,9 +131,13 @@ class BeforeOrderController extends Controller
 
         $order->save();
 
-        return response()->json(['success' => true, 'message' => 'success', 'order' => $order]);
+        // return response()->json(['success' => true, 'message' => '', 'order' => $]);
+            return json_encode(Response::success($order,"success"));
+
         }else{
-        return response()->json(['success' => false, 'message' => 'No order found to convert']);
+        // return response()->json(['success' => false, 'message' => '']);
+            return json_encode(Response::success([],"No order found to convert"));
+
         }
     }
     public function closeBeforeOrder($id)
@@ -127,25 +145,26 @@ class BeforeOrderController extends Controller
         $beforeOrder = BeforeOrder::where('beforeOderId', $id)->first();
 
         if(!$beforeOrder) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Order not found',
-            ], 404);
-        }
+            // return response()->json([
+            //     'success' => false,
+            //     'message' => 'Order not found',
+            // ], 404);
+            return json_encode(Response::error("Order not found"));
 
+        }
         if($beforeOrder->status == 'close') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Order is already closed',
-            ], 400);
+            return json_encode(Response::error("Order is already closed"));
+
         }
 
         $beforeOrder->status = 'closed';
         $beforeOrder->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Order status successfully updated to closed',
-        ], 200);
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => '',
+        // ], 200);
+        return json_encode(Response::success($beforeOrder,"Order status successfully updated to closed"));
+
     }
 }

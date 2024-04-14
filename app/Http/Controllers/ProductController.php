@@ -27,10 +27,12 @@ class ProductController extends Controller
 
         $product = Product::create($validator->validated());
 
-        return response()->json([
-            'message' => 'Product successfully created',
-            'product' => $product
-        ], 201);
+        // return response()->json([
+        //     'message' => '',
+        //     'product' => $product
+        // ], 201);
+        return json_encode(Response::success([],"Product successfully created"));
+
     }
 
     public function getProduct($productId)
@@ -38,19 +40,25 @@ class ProductController extends Controller
         $product = Product::find($productId);
 
         if(!$product) {
-            return response()->json([
-                'message' => 'Product not found',
-            ], 404);
+            // return response()->json([
+            //     'message' => ,
+            // ], 404);
+            return json_encode(Response::error('Product not found'));
+
         }
 
-        return response()->json($product);
+        // return response()->json($);
+            return json_encode(Response::success($product,"Successfully"));
+
     }
 
     public function getAllProducts()
     {
         $products = Product::all();
 
-        return response()->json($products);
+        // return response()->json($);
+            return json_encode(Response::success($products,"Successfully"));
+
     }
 
     public function update(Request $request, $productId)
@@ -58,9 +66,8 @@ class ProductController extends Controller
         $product = Product::find($productId);
 
         if(!$product) {
-            return response()->json([
-                'message' => 'Product not found',
-            ], 404);
+            return json_encode(Response::error('Product not found'));
+
         }
 
         $validator = Validator::make($request->all(), [
@@ -70,16 +77,18 @@ class ProductController extends Controller
         ]);
 
         if($validator->fails()){
-                        return json_encode(Response::error(Response::CVTM($validator)));
+            return json_encode(Response::error(Response::CVTM($validator)));
 
         }
 
         $product->update($validator->validated());
 
-        return response()->json([
-            'message' => 'Product successfully updated',
-            'product' => $product
-        ]);
+        // return response()->json([
+        //     'message' => '',
+        //     'product' => $product
+        // ]);
+        return json_encode(Response::success($product,"Product successfully updated"));
+
     }
 
     public function delete($productId)
@@ -87,9 +96,8 @@ class ProductController extends Controller
         $product = Product::find($productId);
 
         if(!$product) {
-            return response()->json([
-                'message' => 'Product not found',
-            ], 404);
+            return json_encode(Response::error('Product not found'));
+
         }
 
         $product->delete();
@@ -105,9 +113,8 @@ class ProductController extends Controller
         $product = Product::where('name', 'like', '%' . $name . '%')->get();
 
         if($product->isEmpty()) {
-        return response()->json([
-                'message' => 'No table found',
-            ], 404);
+            return json_encode(Response::error('Product not found'));
+
         }
 
         return response()->json($product);

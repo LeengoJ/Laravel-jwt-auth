@@ -20,15 +20,17 @@ class DiscountController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
+            return json_encode(Response::error(Response::CVTM($validator)));
         }
 
         $discount = Discount::create($validator->validated());
 
-        return response()->json([
-            'message' => 'Discount successfully created',
-            'discount' => $discount
-        ], 201);
+        // return response()->json([
+        //     'message' => '',
+        //     'discount' => $
+        // ], 201);
+        return json_encode(Response::success($discount,"Discount successfully created"));
+
     }
 
     public function getDiscount($discountId)
@@ -36,19 +38,20 @@ class DiscountController extends Controller
         $discount = Discount::find($discountId);
 
         if(!$discount) {
-            return response()->json([
-                'message' => 'Discount not found',
-            ], 404);
-        }
+            return json_encode(Response::error('Discount not found'));
 
-        return response()->json($discount);
+        return json_encode(Response::success($discount,"Thong tin giam gia"));
+        }
+        return json_encode(Response::success($discount,"Thong tin giam gia"));
+
     }
 
     public function getAllDiscounts()
     {
         $discounts = Discount::all();
 
-        return response()->json($discounts);
+        return json_encode(Response::success($discounts,"Thong tin giam gia"));
+
     }
 
     public function update(Request $request, $discountId)
@@ -56,9 +59,11 @@ class DiscountController extends Controller
         $discount = Discount::find($discountId);
 
         if(!$discount) {
-            return response()->json([
-                'message' => 'Discount not found',
-            ], 404);
+            // return response()->json([
+            //     'message' => ,
+            // ], 404);
+            return json_encode(Response::error('Discount not found'));
+
         }
 
         $validator = Validator::make($request->all(), [
@@ -70,15 +75,17 @@ class DiscountController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
+            return json_encode(Response::error(Response::CVTM($validator)));
         }
 
         $discount->update($validator->validated());
 
-        return response()->json([
-            'message' => 'Discount successfully updated',
-            'discount' => $discount
-        ]);
+        // return response()->json([
+        //     'message' => ,
+        //     'discount' => $discount
+        // ]);
+        return json_encode(Response::success($discount,"Discount successfully updated"));
+
     }
 
     public function delete($discountId)
@@ -86,45 +93,46 @@ class DiscountController extends Controller
         $discount = Discount::find($discountId);
 
         if(!$discount) {
-            return response()->json([
-                'message' => 'Discount not found',
-            ], 404);
+            return json_encode(Response::error('Discount not found'));
+
         }
 
         $discount->delete();
 
-        return response()->json([
-            'message' => 'Discount successfully deleted',
-        ], 200);
+        // return response()->json([
+        //     'message' => ,
+        // ], 200);
+        return json_encode(Response::success($discount,'Discount successfully deleted'));
+
     }
     public function getAllDiscountsOfProduct($productId)
     {
         $product = Product::find($productId);
 
         if (!$product) {
-            return response()->json([
-                'message' => 'Product not found',
-            ], 404);
+            return json_encode(Response::error('Discount not found'));
+
         }
 
         $discounts = \DB::table('discount')
             ->where('productId', $productId)
             ->get();
 
-        return response()->json($discounts);
+        // return response()->json($discounts);
+        return json_encode(Response::success($discounts,"successfully"));
+
     }
     public function getDiscountByCode($code)
     {
         $product = Product::find($productId);
 
         if (!$product) {
-            return response()->json([
-                'message' => 'Product not found',
-            ], 404);
+            return json_encode(Response::error('Discount not found'));
         }
-
         $discounts = $product->discounts;
 
-        return response()->json($discounts);
+        // return response()->json($discounts);
+        return json_encode(Response::success($discounts,"successfully"));
+
     }
 }

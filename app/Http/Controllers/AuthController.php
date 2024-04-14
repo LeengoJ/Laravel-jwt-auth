@@ -32,7 +32,9 @@ class AuthController extends Controller
         if (! $token = auth()->attempt($validator->validated())) {
             return json_encode(Response::error(Response::CVTM($validator)));
         }
-        return $this->createNewToken($token);
+        // return $this->createNewToken($token);
+            return json_encode(Response::success($token,"Dang nhap thanh cong"));
+
     }
     /**
      * Register a User.
@@ -84,7 +86,9 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function userProfile() {
-        return response()->json(auth()->user());
+        // return response()->json(auth()->user());
+        return json_encode(Response::success(auth()->user(),"Da lay duoc thong tin"));
+
     }
     /**
      * Get the token array structure.
