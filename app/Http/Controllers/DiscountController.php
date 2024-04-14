@@ -11,12 +11,12 @@ class DiscountController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'startTime' => 'required|date',
-            'endTime' => 'required|date|after:start_time',
+            'startTime' => 'required|Integer',
+            'endTime' => 'required|Integer',
             'name' => 'required|string',
             'code' => 'required|string|unique:discounts',
             'discountPercent' => 'required|Integer',
-            'productId' => 'required|integer|exists:products,id',
+            'productId' => 'required|integer|exists:products,productId',
         ]);
 
         if($validator->fails()){
@@ -36,22 +36,16 @@ class DiscountController extends Controller
     public function getDiscount($discountId)
     {
         $discount = Discount::find($discountId);
-
         if(!$discount) {
             return json_encode(Response::error('Discount not found'));
-
-        return json_encode(Response::success($discount,"Thong tin giam gia"));
         }
         return json_encode(Response::success($discount,"Thong tin giam gia"));
-
     }
 
     public function getAllDiscounts()
     {
         $discounts = Discount::all();
-
         return json_encode(Response::success($discounts,"Thong tin giam gia"));
-
     }
 
     public function update(Request $request, $discountId)
@@ -67,11 +61,11 @@ class DiscountController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'startTime' => 'sometimes|time',
-            'endTime' => 'sometimes|time|after:start_time',
+            'startTime' => 'sometimes|Integer',
+            'endTime' => 'sometimes|Integer',
             'name' => 'sometimes|string',
             'code' => 'sometimes|string|unique:discounts',
-            'productId' => 'sometimes|integer|exists:products,id',
+            'productId' => 'sometimes|integer|exists:products,productId',
         ]);
 
         if($validator->fails()){

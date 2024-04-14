@@ -21,11 +21,11 @@ use App\Http\Controllers\before_orderController;
 |
 */
 Route::group([
-    'middleware' => 'api',
-    'prefix' => 'user'
+    'middleware' => ['api','checkrole:admin'],
+    'prefix' => 'users'
 ], function ($router) {
-    Route::post('/getUser', [AuthController::class, 'getUser']);
-    Route::post('/getStaff', [AuthController::class, 'getStaff']);
+    Route::get('', [AuthController::class, 'getAllUsers']);
+    // Route::post('/getStaff', [AuthController::class, 'getStaff']);
     Route::post('/changeRole/{id}', [AuthController::class, 'updateRole']);
     Route::post('/changeBan/{id}', [AuthController::class, 'changeBan']);
 
@@ -46,17 +46,17 @@ Route::group([
     'middleware' => ['api','checkrole:admin'],
     'prefix' => 'products'
 ],function ($router) {
-    Route::post('/multiple-image-upload', [ProductController::class, 'store']);
+    // Route::post('/multiple-image-upload', [ProductController::class, 'store']);
     Route::post('', [ProductController::class, 'create']);
     Route::post('/{id}', [ProductController::class, 'update']);
     Route::delete('{id}', [ProductController::class, 'delete']);
+    Route::get('/{id}', [ProductController::class, 'getProduct']);
 });
 Route::group([
     'prefix' => 'products'
 ],function ($router) {
-    Route::get('/{id}', [ProductController::class, 'getProduct']);
     Route::get('', [ProductController::class, 'getAllProducts']);
-    Route::get('/productByName', [ProductController::class, 'searchByName']);
+    // Route::get('/productByName', [ProductController::class, 'searchByName']);
 });
 
 Route::group([
@@ -84,7 +84,7 @@ Route::group([
     Route::get('/{id}', [DiscountController::class, 'getDiscount']);
     Route::get('/getAllDiscountsOfProduct/{productId}', [DiscountController::class, 'getAllDiscountsOfProduct']);
     Route::get('', [DiscountController::class, 'getAllDiscounts']);
-    Route::post('/updateTable/{id}', [DiscountController::class, 'update']);
+    Route::post('/updateDiscount/{discountId}', [DiscountController::class, 'update']);
     Route::delete('/{id}', [DiscountController::class, 'delete']);
     Route::get('/getDiscountByCode', [DiscountController::class, 'getDiscountByCode']);
 });
@@ -96,6 +96,7 @@ Route::group([
     Route::get('/{id}', [OrderController::class, 'GetOderById']);
     Route::get('', [OrderController::class, 'getAllOrders']);
     Route::post('/updateOrder/{orderId}', [OrderController::class, 'updateOrderByStaff']);
+    Route::post('/updateOrderStatus/{orderId}', [OrderController::class, 'updateOrderStatus']);
     Route::delete('/{id}', [OrderController::class, 'closeOrder']);
     Route::get('/findOrdersBySdt', [OrderController::class, 'findOrdersBySdt']);
     Route::post('/addProductIntoOrder/{orderId}', [OrderController::class, 'addProductIntoOrder']);

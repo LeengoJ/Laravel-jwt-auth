@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+
 class CheckRole
 {
     /**
@@ -27,12 +28,12 @@ class CheckRole
         if (auth()->user() && auth()->user()->role) {
             $role_user = auth()->user()->role;
             if ($role_user != $role) {
-                return redirect('Bạn không có quyền');
+                response()->json(\App\Http\Controllers\Response::error("Quyền truy cập bị từ chối",403));
             }
 
             return $next($request);
         }
 
-        return response('Unauthorized.', 401);
+        return response()->json(\App\Http\Controllers\Response::error("Quyền truy cập bị từ chối",403));
     }
 }

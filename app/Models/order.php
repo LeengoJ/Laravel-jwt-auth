@@ -21,6 +21,7 @@ class Order extends Model
         'status',
         'discountPayment',
         'numberTable',
+        'isTakeAway'
     ];
 
     public function user()

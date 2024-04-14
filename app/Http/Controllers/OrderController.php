@@ -61,7 +61,7 @@ class OrderController extends Controller
             $products[$id][$size] = $numberOfSize;
             $singlePrice = $this->getPriceBySizeAndId($id, $size); // this function gets product price by id and size
             // Get discounts for the current product
-            $discounts = \DB::table('discount')
+            $discounts = \DB::table('discounts')
                 ->where('productId', $id)
                 ->where(function ($query) use ($discountCode) {
                     $query->where('code', $discountCode)
@@ -87,14 +87,15 @@ class OrderController extends Controller
         // }
         $order = Order::create([
             'userId' => \Auth::id(),
-            'time' =>  now(),
+            'time' =>  time(),
             'sdt' => $new_order['sdt'],
             'note' => $new_order['note'],
             'numberProduct' => count($products),
             'totalBill' => $totalPrice,
             'discountPayment' => $discountPayment,
-            'status'=>'spending',
+            'status'=>'waiting',
             'numberTable' => $new_order['numberTable'],
+            'isTakeAway' => $new_order['isTakeAway'],
             'discountCode' => $new_order['discountCode']
         ]);
 
@@ -107,11 +108,11 @@ class OrderController extends Controller
             $size = $parts[1];
             $numberOfSize = $parts[2];
 
-            $sizeReel = explode(":", $string)[0];
-            $price = $this->getPriceBySizeAndId($id,$size) * intval($numberOfSize);
+            // $sizeReel = explode(":", $string)[0];
+            $price = $this->getPriceBySizeAndId($id,$size);
 
             $order_detail = OrderDetails::create([
-                'size' => $sizeReel,
+                'size' => $size,
                 'orderId' => $orderId,
                 'productId' => $id,
                 'price' => $price,
@@ -160,7 +161,7 @@ class OrderController extends Controller
                 $products[$id][$size] = $numberOfSize;
                 $singlePrice = $this->getPriceBySizeAndId($id, $size);
 
-                $discounts = \DB::table('discount')
+                $discounts = \DB::table('discounts')
                     ->where('productId', $id)
                     ->where(function ($query) use ($discountCode) {
                         $query->where('code', $discountCode)
@@ -185,14 +186,15 @@ class OrderController extends Controller
 
             $order->update([
                 'userId' => \Auth::id(),
-                'time' =>  now(),
+                'time' =>  time(),
                 'sdt' => $new_order['sdt'],
                 'note' => $new_order['note'],
                 'numberProduct' => count($products),
                 'totalBill' => $totalPrice,
                 'discountPayment' => $discountPayment,
-                'status'=>'spending',
+                'status'=>$new_order['status'],
                 'numberTable' => $new_order['numberTable'],
+                'isTakeAway' => $new_order['isTakeAway'],
                 'discountCode' => $new_order['discountCode'],
             ]);
 
@@ -218,7 +220,7 @@ class OrderController extends Controller
                 //     ]);
 
                 // } else {
-                    $price = $this->getPriceBySizeAndId($id,$size) * intval($numberOfSize);
+                    $price = $this->getPriceBySizeAndId($id,$size);
 
                     OrderDetails::create([
                         'size'=> $size,
@@ -314,10 +316,6 @@ class OrderController extends Controller
         $order->status = $status;
         $order->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Order status updated',
-            'order' => $order
-        ], 200);
+        return json_encode(Response::success(''));
     }
 }
