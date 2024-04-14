@@ -137,6 +137,9 @@ class AuthController extends Controller
         $users = User::where('role', 'staff')->orWhere('role', 'user')->get();
         return response()->json(Response::success($users,"success"));
     }
+    function checkLogin() {
+        return response()->json(Response::success("login","success"));
+    }
     public function updateRole(Request $request, $userId) {
         // Tìm user
         $user = User::find($userId);
