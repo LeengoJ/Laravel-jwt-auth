@@ -133,4 +133,7 @@ class AuthController extends Controller
         $user = User::find();
         return response()->json(Response::success($user,"success"));
     }
+    function updateRole(){
+
+    }
 }

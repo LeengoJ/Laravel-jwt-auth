@@ -82,7 +82,6 @@ class OrderController extends Controller
         }
 
         $discountPayment = 0;
-        var_dump($totalPrice);
         // foreach($processed_products as $products) {
         //     $discountPayment += ($product['money'] - $product['price_after_discount']);
         // }
@@ -127,6 +126,7 @@ class OrderController extends Controller
     public function GetOderById($orderId)
     {
         $order = Order::find($orderId);
+
 
         if (!$order) {
             return json_encode(Response::error('Order not found'));
@@ -257,7 +257,7 @@ class OrderController extends Controller
             return response()->json(['message' => 'No orders found with this phone number'], 404);
         }
 
-                return json_encode(Response::success($orders,"successfully"));
+             return json_encode(Response::success($orders,"successfully"));
 
     }
 
