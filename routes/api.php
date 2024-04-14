@@ -22,6 +22,16 @@ use App\Http\Controllers\before_orderController;
 */
 Route::group([
     'middleware' => 'api',
+    'prefix' => 'user'
+], function ($router) {
+    Route::post('/getUser', [AuthController::class, 'getUser']);
+    Route::post('/getStaff', [AuthController::class, 'getStaff']);
+    Route::post('/changeRole/{id}', [AuthController::class, 'updateRole']);
+    Route::post('/changeBan/{id}', [AuthController::class, 'changeBan']);
+
+});
+Route::group([
+    'middleware' => 'api',
     'prefix' => 'auth'
 ], function ($router) {
     Route::post('/login', [AuthController::class, 'login']);

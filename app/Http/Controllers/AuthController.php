@@ -50,7 +50,8 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:6',
             'sdt' => 'required|numeric',
-            'role' => 'required|string'
+            'role' => 'required|string',
+            'isBan'=> 'in:no',
         ]);
         if($validator->fails()){
             // return response()->json($validator->errors()->toArray(), 400);
@@ -133,7 +134,63 @@ class AuthController extends Controller
         $user = User::find();
         return response()->json(Response::success($user,"success"));
     }
-    function updateRole(){
+    public function updateRole(Request $request, $userId) {
+        // Tìm user
+        $user = User::find($userId);
 
+        if(!$user){
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        // Nhận dữ liệu role từ form
+        $role = $request->get('role');
+
+        // Sửa
+        $user->role = $role;
+        $user->save();
+
+        // Phản hồi thành công
+        return response()->json(['message' => 'User role updated', 'user' => $user], 200);
+    }
+    public function getUser($userId) {
+        // Tìm user và trả về luôn
+        $user = User::find($userId);
+
+        // Nếu không tìm thấy.
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        return response()->json(['message' => 'Success', 'user' => $user], 200);
+    }
+    public function getStaff(){
+        // Lấy staff (nếu 'role' của staff là 'staff') và trả về luôn
+        $staff = User::where('role', 'staff')->get();
+
+        // Nếu có ít nhất một staff
+        if (count($staff) > 0){
+            return response()->json(['message' => 'Success', 'staff' => $staff], 200);
+        }
+
+        return response()->json(['message' => 'No staff members found'], 404);
+    }
+    public function changeBan(Request $request, $userId) {
+    // Tìm user
+        $user = User::find($userId);
+
+        // Nếu không tìm ra user, trả về lỗi
+        if(!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        // Nhận dữ liệu 'isBan' từ form
+        $isBan = $request->get('isBan');
+
+        // Sửa
+        $user->isBan = $isBan;
+        $user->save();
+
+        // Phản hồi thành công
+        return response()->json(['message' => 'User ban status updated', 'user' => $user], 200);
     }
 }
