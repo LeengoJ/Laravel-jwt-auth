@@ -6,7 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\BeforeOrderController;
+use App\Http\Controllers\before_orderController;
 
 
 
@@ -97,15 +97,15 @@ Route::group([
     'middleware' => ['api','checkrole:admin'],
     'prefix' => 'before_orders'
 ],function ($router) {
-    Route::post('', [DiscountController::class, 'createBeforeOrder']);
-    Route::get('/{id}', [DiscountController::class, 'GetOderById']);
-    Route::get('/getBeforeOrderDetails/{productId}', [DiscountController::class, 'getAllDiscountsOfProduct']);
-    Route::get('', [DiscountController::class, 'getAllBeforeOrders']);
-    Route::get('/getBeforeOrderDetails', [DiscountController::class, 'getBeforeOrderDetails']);
-    Route::get('/getBeforeOrdersOfUser/{id}', [DiscountController::class, 'getBeforeOrdersOfUser']);
-    Route::post('/updateOrder/{id}', [DiscountController::class, 'getBeforeOrdersOfUser']);
-    Route::post('/updateBeforeOrderStatus/{id}', [DiscountController::class, 'updateBeforeOrderStatus']);
-    Route::post('/convertOrder/{id}', [DiscountController::class, 'convertOrder']);
-    Route::delete('/{id}', [DiscountController::class, 'closeBeforeOrder']);
-    Route::get('/findOrdersBySdt', [DiscountController::class, 'findOrdersBySdt']);
+    Route::post('', [before_orderController::class, 'createbefore_order']);
+    Route::get('/{id}', [before_orderController::class, 'GetOderById']);
+    Route::get('/getBeforeOrderDetails/{productId}', [before_orderController::class, 'getAllDiscountsOfProduct']);
+    Route::get('', [before_orderController::class, 'getAllBeforeOrders']);
+    Route::get('/getBeforeOrderDetails', [before_orderController::class, 'getBeforeOrderDetails']);
+    Route::get('/getBeforeOrdersOfUser/{id}', [before_orderController::class, 'getBeforeOrdersOfUser']);
+    Route::post('/updateOrder/{id}', [before_orderController::class, 'getBeforeOrdersOfUser']);
+    Route::post('/updateBeforeOrderStatus/{id}', [before_orderController::class, 'updateBeforeOrderStatus']);
+    Route::post('/convertOrder/{id}', [before_orderController::class, 'convertOrder']);
+    Route::delete('/{id}', [before_orderController::class, 'closeBeforeOrder']);
+    Route::get('/findOrdersBySdt', [before_orderController::class, 'findOrdersBySdt']);
 });
