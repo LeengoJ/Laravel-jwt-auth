@@ -31,7 +31,7 @@ class ProductController extends Controller
         //     'message' => '',
         //     'product' => $product
         // ], 201);
-        return json_encode(Response::success([],"Product successfully created"));
+        return json_encode(Response::success($product,"Product successfully created"));
 
     }
 
