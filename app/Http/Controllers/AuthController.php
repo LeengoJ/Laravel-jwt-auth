@@ -50,8 +50,6 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:6',
             'sdt' => 'required|numeric',
-            'role' => 'required|string',
-            'isBan'=> 'in:no',
         ]);
         if($validator->fails()){
             // return response()->json($validator->errors()->toArray(), 400);
@@ -59,10 +57,15 @@ class AuthController extends Controller
             // return response()->json(Response::error(Response::CVTM($validator)));
             // return "sai";
         }
-        $user = User::create(array_merge(
-                    $validator->validated(),
-                    ['password' => bcrypt($request->password)]
-                ));
+        $userData = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'sdt' => $request->sdt,
+            'role' => "user",
+            'isBan'=>"no"
+        ];
+        $user = User::create($userData);
         return response()->json(Response::success(Response::CVTM($validator)));
     }
 
@@ -131,26 +134,24 @@ class AuthController extends Controller
 
     }
     function getAllUsers() {
-        $user = User::find();
-        return response()->json(Response::success($user,"success"));
+        $users = User::where('role', 'staff')->orWhere('role', 'user')->get();
+        return response()->json(Response::success($users,"success"));
     }
     public function updateRole(Request $request, $userId) {
         // Tìm user
         $user = User::find($userId);
 
         if(!$user){
-            return response()->json(['message' => 'User not found'], 404);
+            return response()->json(Response::error("User not found"));
         }
 
         // Nhận dữ liệu role từ form
         $role = $request->get('role');
-
         // Sửa
         $user->role = $role;
         $user->save();
 
-        // Phản hồi thành công
-        return response()->json(['message' => 'User role updated', 'user' => $user], 200);
+        return response()->json(Response::success([]));
     }
     public function getUser($userId) {
         // Tìm user và trả về luôn
@@ -175,14 +176,12 @@ class AuthController extends Controller
         return response()->json(['message' => 'No staff members found'], 404);
     }
     public function changeBan(Request $request, $userId) {
-    // Tìm user
+        // Tìm user
         $user = User::find($userId);
-
         // Nếu không tìm ra user, trả về lỗi
         if(!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+            return response()->json(response()->json(Response::error("User not found")));
         }
-
         // Nhận dữ liệu 'isBan' từ form
         $isBan = $request->get('isBan');
 
@@ -190,7 +189,6 @@ class AuthController extends Controller
         $user->isBan = $isBan;
         $user->save();
 
-        // Phản hồi thành công
-        return response()->json(['message' => 'User ban status updated', 'user' => $user], 200);
+        return response()->json(Response::success([]));
     }
 }

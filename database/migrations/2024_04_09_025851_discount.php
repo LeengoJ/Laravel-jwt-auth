@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('discount', function (Blueprint $table) {
+        Schema::create('discounts', function (Blueprint $table) {
             $table->id();
-            $table->timestamp('startTime');
-            $table->timestamp('endTime');
+            $table->unsignedBigInteger('startTime');
+            $table->unsignedBigInteger('endTime');
             $table->string('name');
             $table->string('code')->unique();
             $table->Integer('discountPercent');

@@ -47,6 +47,7 @@ class ProductController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|unique:products',
+            'description' => 'required|string',
             'sizes' => 'required',
         ]);
 
@@ -73,6 +74,7 @@ class ProductController extends Controller
             'name' => $request->get('name'),
             'img' => $fileName,
             'sizes' => $request->get('sizes'),
+            'description' => $request->get('description'),
         ];
 
         $product = Product::create($productData);
@@ -122,6 +124,7 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|string',
             'sizes' => 'sometimes|string',
+            'description' => 'required|string'
         ]);
 
         if($validator->fails()){
@@ -146,6 +149,7 @@ class ProductController extends Controller
         $productData=[
             'name' => $request->get('name'),
             'sizes' => $request->get('sizes'),
+            'description' => $request->get('description')
         ];
         if($fileName!==""){
             $productData["img"] = $fileName;

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->char('size');
             $table->unsignedBigInteger('orderId');
             $table->unsignedBigInteger('productId');
-            $table->float('price', 8, 2);
+            $table->unsignedBigInteger('price');
             $table->integer('number');
             $table->timestamps();
             $table->foreign('orderId')->references('orderId')->on('orders');
