@@ -13,7 +13,7 @@ class before_order_details extends Model
     protected $fillable = [
 
         'size',
-        'before_orderId',
+        'beforeOderId',
         'productId',
         'price',
         'number'
