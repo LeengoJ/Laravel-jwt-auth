@@ -58,8 +58,7 @@ class TableController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|string',
             'floor' => 'sometimes|integer',
-            'status' => 'sometimes|string',
-            'tableName' => 'sometimes|string',
+            'tableNumber' => 'sometimes|string',
         ]);
 
         if($validator->fails()){

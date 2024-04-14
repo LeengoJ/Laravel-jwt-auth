@@ -30,11 +30,14 @@ class AuthController extends Controller
             return json_encode(Response::error(Response::CVTM($validator)));
         }
         if (! $token = auth()->attempt($validator->validated())) {
-            return json_encode(Response::error(Response::CVTM($validator)));
+            return json_encode(Response::error("Sai email hoặc mật khẩu"));
         }
         // return $this->createNewToken($token);
-            return json_encode(Response::success($token,"Dang nhap thanh cong"));
-
+        return json_encode(Response::success(
+            [
+                'token' => $token,
+                'role' => auth()->user()["role"]
+            ],"Dang nhap thanh cong"));
     }
     /**
      * Register a User.
@@ -45,7 +48,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
             'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|confirmed|min:6',
+            'password' => 'required|string|min:6',
             'sdt' => 'required|numeric',
             'role' => 'required|string'
         ]);

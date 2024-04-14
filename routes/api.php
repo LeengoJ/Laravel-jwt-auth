@@ -38,10 +38,14 @@ Route::group([
 ],function ($router) {
     Route::post('/multiple-image-upload', [ProductController::class, 'store']);
     Route::post('', [ProductController::class, 'create']);
-    Route::get('/{id}', [ProductController::class, 'getProduct']);
-    Route::get('', [ProductController::class, 'getAllProducts']);
     Route::post('/{id}', [ProductController::class, 'update']);
     Route::delete('{id}', [ProductController::class, 'delete']);
+});
+Route::group([
+    'prefix' => 'products'
+],function ($router) {
+    Route::get('/{id}', [ProductController::class, 'getProduct']);
+    Route::get('', [ProductController::class, 'getAllProducts']);
     Route::get('/productByName', [ProductController::class, 'searchByName']);
 });
 
@@ -54,8 +58,14 @@ Route::group([
     Route::get('', [TableController::class, 'getAllTables']);
     Route::post('/updateTable/{id}', [TableController::class, 'update']);
     Route::delete('{id}', [TableController::class, 'delete']);
-    Route::post('/updateStatusTables/{id}', [TableController::class, 'updateStatusTable']);
     Route::get('/searchByName', [TableController::class, 'searchByName']);
+});
+Route::group([
+    'middleware' => ['api','checkrole:staff'],
+    'prefix' => 'tables'
+],function ($router) {
+    Route::get('', [TableController::class, 'getAllTables']);
+    Route::post('/updateStatusTables/{tableId}', [TableController::class, 'updateStatusTable']);
 });
 Route::group([
     'middleware' => ['api','checkrole:admin'],
@@ -70,7 +80,7 @@ Route::group([
     Route::get('/getDiscountByCode', [DiscountController::class, 'getDiscountByCode']);
 });
 Route::group([
-    'middleware' => ['api','checkrole:admin'],
+    'middleware' => ['api','checkrole:staff'],
     'prefix' => 'orders'
 ],function ($router) {
     Route::post('', [OrderController::class, 'createOrderByStaff']);
