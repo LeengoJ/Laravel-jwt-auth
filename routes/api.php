@@ -60,23 +60,22 @@ Route::group([
 });
 
 Route::group([
-    'middleware' => ['api','checkrole:admin'],
+    'middleware' => ['api'],
     'prefix' => 'tables'
 ],function ($router) {
-    Route::post('', [TableController::class, 'create']);
-    Route::get('/{id}', [TableController::class, 'getTable']);
-    Route::get('', [TableController::class, 'getAllTables']);
-    Route::post('/updateTable/{id}', [TableController::class, 'update']);
-    Route::delete('{id}', [TableController::class, 'delete']);
+    Route::post('/', [TableController::class, 'create'])->middleware("checkrole:admin");
+    Route::get('/{id}', [TableController::class, 'getTable'])->middleware("checkrole:admin");
+    Route::get('/', [TableController::class, 'getAllTables']);
+    Route::post('/updateTable/{id}', [TableController::class, 'update'])->middleware("checkrole:admin");
+    Route::delete('{id}', [TableController::class, 'delete'])->middleware("checkrole:admin");
     Route::get('/searchByName', [TableController::class, 'searchByName']);
+    Route::post('/updateStatusTables/{tableId}', [TableController::class, 'updateStatusTable'])->middleware("checkrole:staff");
 });
-Route::group([
-    'middleware' => ['api','checkrole:staff'],
-    'prefix' => 'tables'
-],function ($router) {
-    Route::get('', [TableController::class, 'getAllTables']);
-    Route::post('/updateStatusTables/{tableId}', [TableController::class, 'updateStatusTable']);
-});
+// Route::group([
+//     'middleware' => ['api','checkrole:staff'],
+//     'prefix' => 'tables'
+// ],function ($router) {
+// });
 Route::group([
     'middleware' => ['api','checkrole:admin'],
     'prefix' => 'discounts'
@@ -96,7 +95,7 @@ Route::group([
     Route::post('', [OrderController::class, 'createOrderByStaff']);
     Route::get('/{id}', [OrderController::class, 'GetOderById']);
     Route::get('', [OrderController::class, 'getAllOrders']);
-    Route::post('/updateOrder/{id}', [OrderController::class, ' ']);
+    Route::post('/updateOrder/{orderId}', [OrderController::class, 'updateOrderByStaff']);
     Route::delete('/{id}', [OrderController::class, 'closeOrder']);
     Route::get('/findOrdersBySdt', [OrderController::class, 'findOrdersBySdt']);
     Route::post('/addProductIntoOrder/{orderId}', [OrderController::class, 'addProductIntoOrder']);
