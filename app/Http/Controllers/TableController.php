@@ -18,16 +18,12 @@ class TableController extends Controller
         ]);
 
         if($validator->fails()){
-                        return json_encode(Response::error(Response::CVTM($validator)));
-
+           return json_encode(Response::error(Response::CVTM($validator)));
         }
 
         $table = Table::create($validator->validated());
+        return json_encode(Response::success($table,"Table successfully created"));
 
-        return response()->json([
-            'message' => 'Table successfully created',
-            'table' => $table
-        ], 201);
     }
 
     public function getTable($tableId)
@@ -35,19 +31,20 @@ class TableController extends Controller
         $table = Table::find($tableId);
 
         if(!$table) {
-            return response()->json([
-                'message' => 'Table not found',
-            ], 404);
+            return json_encode(Response::error('Table not found'));
+
         }
 
-        return response()->json($table);
+            return json_encode(Response::success($table,"Success"));
+
     }
 
     public function getAllTables()
     {
         $tables = Table::all();
 
-        return response()->json($tables);
+        return json_encode(Response::success($tables,""));
+
     }
 
     public function update(Request $request, $tableId)
@@ -55,9 +52,7 @@ class TableController extends Controller
         $table = Table::find($tableId);
 
         if(!$table) {
-            return response()->json([
-                'message' => 'Table not found',
-            ], 404);
+            return json_encode(Response::error('Table not found'));
         }
 
         $validator = Validator::make($request->all(), [
@@ -68,16 +63,12 @@ class TableController extends Controller
         ]);
 
         if($validator->fails()){
-                        return json_encode(Response::error(Response::CVTM($validator)));
+            return json_encode(Response::error(Response::CVTM($validator)));
 
         }
-
         $table->update($validator->validated());
+        return json_encode(Response::success($table,"Table successfully updated"));
 
-        return response()->json([
-            'message' => 'Table successfully updated',
-            'table' => $table
-        ]);
     }
 
     public function delete($tableId)
@@ -85,16 +76,13 @@ class TableController extends Controller
         $table = Table::find($tableId);
 
         if(!$table) {
-            return response()->json([
-                'message' => 'Table not found',
-            ], 404);
+            return json_encode(Response::error('Table not found'));
+
         }
 
         $table->delete();
+            return json_encode(Response::success([],"Table successfully deleted"));
 
-        return response()->json([
-            'message' => 'Table successfully deleted',
-        ], 200);
     }
 
     public function searchByName(Request $request)
@@ -103,21 +91,19 @@ class TableController extends Controller
         $table = Table::where('name', 'like', '%' . $name . '%')->get();
 
         if($table->isEmpty()) {
-        return response()->json([
-                'message' => 'No table found',
-            ], 404);
-        }
+            return json_encode(Response::error('Table not found'));
 
-        return response()->json($table);
+        }
+            return json_encode(Response::success($table,""));
+
     }
     public function updateStatusTable(Request $request, $tableId)
     {
         $table = Table::find($tableId);
 
         if(!$table) {
-                return response()->json([
-                    'message' => 'Table not found',
-                ], 404);
+            return json_encode(Response::error('Table not found'));
+
         }
 
         $validator = Validator::make($request->all(), [
@@ -129,10 +115,7 @@ class TableController extends Controller
         }
 
         $table->update(['status' => $request->status]);
+            return json_encode(Response::success($table,"Table status successfully updated"));
 
-        return response()->json([
-            'message' => 'Table status successfully updated',
-            'table' => $table
-        ]);
     }
 }

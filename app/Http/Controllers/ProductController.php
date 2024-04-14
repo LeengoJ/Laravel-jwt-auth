@@ -99,12 +99,9 @@ class ProductController extends Controller
             return json_encode(Response::error('Product not found'));
 
         }
-
         $product->delete();
+        return json_encode(Response::success([],"Product successfully deleted"));
 
-        return response()->json([
-            'message' => 'Product successfully deleted',
-        ], 200);
     }
 
     public function searchByName(Request $request)
@@ -117,6 +114,7 @@ class ProductController extends Controller
 
         }
 
-        return response()->json($product);
+        return json_encode(Response::success($product,"Product successfully updated"));
+
     }
 }
