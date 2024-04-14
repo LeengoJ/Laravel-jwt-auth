@@ -82,7 +82,6 @@ class OrderController extends Controller
         }
 
         $discountPayment = 0;
-        var_dump($totalPrice);
         // foreach($processed_products as $products) {
         //     $discountPayment += ($product['money'] - $product['price_after_discount']);
         // }
@@ -99,7 +98,6 @@ class OrderController extends Controller
         ]);
 
         $orderId = $order->orderId;
-        var_dump($orderId);
         foreach ($items as $item) {
             // Phân tách thành phần con theo dấu ':'
             $parts = explode(':', $item);
@@ -131,7 +129,7 @@ class OrderController extends Controller
         if (!$order) {
             return json_encode(Response::error('Order not found'));
         }
-        return json_encode(Response::success($orders,"successfully"));
+        return json_encode(Response::success($order,"successfully"));
 
     }
 
@@ -182,7 +180,6 @@ class OrderController extends Controller
 
             $discountPayment = 0;
 
-            var_dump($totalPrice);
 
             $order->update([
                 'userId' => \Auth::id(),
@@ -196,31 +193,28 @@ class OrderController extends Controller
                 'discountCode' => $new_order['discountCode'],
             ]);
 
+            OrderDetails::where('orderId', $orderId)->delete();
+
             foreach ($items as $item) {
-                if(OrderDetails::where('orderId', $orderId)->where('productId', $id)->exists()){
-                    $order_detail = OrderDetails::where('orderId', $orderId)->where('productId', $id)->first();
+                $parts = explode(':', $item);
 
-                    $parts = explode(':', $item);
+                $id = $parts[0];
+                $size = $parts[1];
+                $numberOfSize = $parts[2];
 
-                    $id = $parts[0];
-                    $size = explode(".", $parts[1])[0];
-                    $numberOfSize = explode(".", $parts[1])[1];
+                
+                
+                // if(OrderDetails::where('orderId', $orderId)->where('productId', $id)->exists()){
+                //     $order_detail = OrderDetails::where('orderId', $orderId)->where('productId', $id)->where('size',$size )->first();
+                //     $price = $this->getPriceBySizeAndId($id,$size) * intval($numberOfSize);
 
-                    $price = $this->getPriceBySizeAndId($id,$size) * intval($numberOfSize);
+                //     $order_detail->update([
+                //         'size' => $size,
+                //         'price' => $price,
+                //         'number' => $numberOfSize,
+                //     ]);
 
-                    $order_detail->update([
-                        'size' => $size,
-                        'price' => $price,
-                        'number' => $numberOfSize,
-                    ]);
-
-                } else {
-                    $parts = explode(':',$item);
-
-                    $id = $parts[0];
-                    $size = explode(".", $parts[1])[0];
-                    $numberOfSize = explode(".", $parts[1])[1];
-
+                // } else {
                     $price = $this->getPriceBySizeAndId($id,$size) * intval($numberOfSize);
 
                     OrderDetails::create([
@@ -230,7 +224,7 @@ class OrderController extends Controller
                         'price'=> $price,
                         'number'=> $numberOfSize,
                     ]);
-                }
+                // }
             }
 
             return json_encode(Response::success($order, "Order updated successfully"));
@@ -283,7 +277,9 @@ class OrderController extends Controller
     public function getOrderDetails($orderId)
     {
         // Tìm orderDetails theo orderId
-        $orderDetails = Order_Details::where('orderId', $orderId)->get();
+        $orderDetails = OrderDetails::where('orderId', $orderId)
+        ->join('products', 'order_details.productId', '=', 'products.productId')
+        ->get();
 
         // Nếu không tìm thấy orderDetails nào, trả về thông báo
         if (!$orderDetails) {
@@ -291,7 +287,7 @@ class OrderController extends Controller
         }
 
         // Nếu tìm thấy orderDetails, trả về dữ liệu
-                return json_encode(Response::success($orderDetails,"successfully"));
+        return json_encode(Response::success($orderDetails,"successfully"));
 
     }
 }
