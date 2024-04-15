@@ -110,10 +110,15 @@ Route::group([
 ],function ($router) {
     Route::post('', [before_orderController::class, 'createbefore_order']);
     Route::get('/{id}', [before_orderController::class, 'getbefore_orderDetails']);
-    Route::get('', [before_orderController::class, 'getAllBeforeOrders']);
-    Route::post('/updateOrder/{id}', [before_orderController::class, 'updatebefore_order']);
-    Route::post('/updateBeforeOrderStatus/{id}', [before_orderController::class, 'updatebefore_orderStatus']);
-    Route::post('/convertOrder/{id}', [before_orderController::class, 'convertOrder']);
-    Route::delete('/{id}', [before_orderController::class, 'closebefore_order']);
     Route::get('/getBeforeOrdersOfUser', [before_orderController::class, 'getbefore_ordersOfUser']);
+});
+Route::group([
+    'middleware' => ['api','checkrole:staff'],
+    'prefix' => 'before_orders'
+],function ($router) {
+    Route::get('/{id}', [before_orderController::class, 'getbefore_orderDetails']);
+    Route::get('', [before_orderController::class, 'getAllBeforeOrders']);
+    Route::get('/getBeforeOrderDetailsItems/{beforeOrderId}', [before_orderController::class, 'getBeforeOrderDetailsItems']);
+    Route::post('/updateBeforeOrderStatus/{beforeOrderId}', [before_orderController::class, 'updatebefore_orderStatus']);
+    Route::post('/convertOrder/{id}', [before_orderController::class, 'convertOrder']);
 });

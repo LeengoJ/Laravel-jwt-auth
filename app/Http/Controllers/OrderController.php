@@ -49,6 +49,7 @@ class OrderController extends Controller
         $products;
         $totalPrice = 0;
         $discountPayment =0;
+        $numberProduct=0;
         foreach ($items as $item) {
             // Phân tách thành phần con theo dấu ':'
             $parts = explode(':', $item);
@@ -56,6 +57,7 @@ class OrderController extends Controller
             $id = $parts[0];
             $size = $parts[1];
             $numberOfSize = $parts[2];
+            $numberProduct+=$numberOfSize;
 
 
             $products[$id][$size] = $numberOfSize;
@@ -74,14 +76,14 @@ class OrderController extends Controller
             // $discountPayment += $singlePrice * $numberOfSize;
             if (!empty($discounts)) {
                 $discountAmount = $singlePrice * $numberOfSize * $discounts->discountPercent / 100;
-
+                $discountPayment+=$discountAmount;
                 $totalPrice += $singlePrice * $numberOfSize - $discountAmount;
             } else {
                 $totalPrice += $singlePrice * $numberOfSize;
             }
         }
 
-        $discountPayment = 0;
+        // $discountPayment = 0;
         // foreach($processed_products as $products) {
         //     $discountPayment += ($product['money'] - $product['price_after_discount']);
         // }
@@ -90,7 +92,7 @@ class OrderController extends Controller
             'time' =>  time(),
             'sdt' => $new_order['sdt'],
             'note' => $new_order['note'],
-            'numberProduct' => count($products),
+            'numberProduct' => $numberProduct,
             'totalBill' => $totalPrice,
             'discountPayment' => $discountPayment,
             'status'=>'waiting',
@@ -148,7 +150,7 @@ class OrderController extends Controller
             $products;
             $totalPrice = 0;
             $discountPayment =0;
-
+            $numberProduct=0;
             foreach ($items as $item) {
 
                 $parts = explode(':', $item);
@@ -156,7 +158,7 @@ class OrderController extends Controller
                 $id = $parts[0];
                 $size = $parts[1];
                 $numberOfSize = $parts[2];
-
+                $numberProduct+=$numberOfSize;
 
                 $products[$id][$size] = $numberOfSize;
                 $singlePrice = $this->getPriceBySizeAndId($id, $size);
@@ -174,14 +176,14 @@ class OrderController extends Controller
 
                 if (!empty($discounts)) {
                     $discountAmount = $singlePrice * $numberOfSize * $discounts->discountPercent / 100;
-
+                    $discountPayment+=$discountAmount;
                     $totalPrice += $singlePrice * $numberOfSize - $discountAmount;
                 } else {
                     $totalPrice += $singlePrice * $numberOfSize;
                 }
             }
 
-            $discountPayment = 0;
+            // $discountPayment = 0;
 
 
             $order->update([
@@ -189,7 +191,7 @@ class OrderController extends Controller
                 'time' =>  time(),
                 'sdt' => $new_order['sdt'],
                 'note' => $new_order['note'],
-                'numberProduct' => count($products),
+                'numberProduct' => $numberProduct,
                 'totalBill' => $totalPrice,
                 'discountPayment' => $discountPayment,
                 'status'=>$new_order['status'],

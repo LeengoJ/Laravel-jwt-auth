@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class before_order extends Model
 {
     use HasFactory;
+    protected $primaryKey = 'beforeOrderId';
     protected $fillable = [
         'userId', 'time', 'status', 'tableNumber', 'isTakeAway', 'note', 'discountCode'
     ];
