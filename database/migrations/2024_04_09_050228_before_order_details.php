@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('before_order_details', function (Blueprint $table) {
             $table->string('size');
-            $table->unsignedBigInteger('beforeOderId');
+            $table->unsignedBigInteger('beforeOrderId');
             $table->unsignedBigInteger('productId');
-            $table->float('price');
+            $table->unsignedBigInteger('price');
             $table->integer('number');
             $table->timestamps();
 
-            $table->foreign('beforeOderId')->references('deforeOderId')->on('before_orders');
+            $table->foreign('beforeOrderId')->references('beforeOrderId')->on('before_orders');
             $table->foreign('productId')->references('productId')->on('products');
         });
     }

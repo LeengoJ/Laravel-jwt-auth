@@ -12,12 +12,12 @@ return new class extends Migration
     public function up()
     {
         Schema::create('before_orders', function (Blueprint $table) {
-            $table->id('deforeOderId');
+            $table->id('beforeOrderId');
             $table->unsignedBigInteger('userId');
-            $table->timestamp('time')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->unsignedBigInteger('time');
             $table->string('status');
             $table->smallInteger('tableNumber');
-            $table->boolean('isTakeAway');
+            $table->string('isTakeAway');
             $table->text('note')->nullable();
             $table->string('discountCode')->nullable();
             $table->timestamps();
